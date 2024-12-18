@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Games</title>
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+
+        header {
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.2em;
+        }
+
+        /* Game Grid */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .game-tile {
+            background: #fff;
+            color: #333;
+            padding: 20px;
+            border-radius: 15px;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+
+        .game-tile img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+        }
+
+        .game-tile p {
+            font-size: 1.1em;
+        }
+
+        /* Hover Effects */
+        .game-tile:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 50px;
+            font-size: 0.8em;
+        }
+
+        /* Game Modal */
+        .game-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .close-btn {
+            background: #ff7e5f;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 1.2em;
+            border-radius: 5px;
+        }
+
+        .close-btn:hover {
+            background: #feb47b;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Welcome to Mini Games!</h1>
+        <p>Choose a game and have fun!</p>
+    </header>
+
+    <main>
+        <section class="game-grid">
+            <div class="game-tile" onclick="openGame('Card Flip')">
+                <img src="https://via.placeholder.com/80" alt="Card Flip">
+                <p>Card Flip</p>
+            </div>
+            <div class="game-tile" onclick="openGame('Picture Puzzle')">
+                <img src="https://via.placeholder.com/80" alt="Picture Puzzle">
+                <p>Picture Puzzle</p>
+            </div>
+            <div class="game-tile" onclick="openGame('Tic Tac Toe')">
+                <img src="https://via.placeholder.com/80" alt="Tic Tac Toe">
+                <p>Tic Tac Toe</p>
+            </div>
+            <div class="game-tile" onclick="openGame('Sequence Slide')">
+                <img src="https://via.placeholder.com/80" alt="Sequence Slide">
+                <p>Sequence Slide</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Mini Games | All Rights Reserved</p>
+    </footer>
+
+    <!-- Modal for Game Preview -->
+    <div id="gameModal" class="game-modal">
+        <div class="modal-content">
+            <h2 id="gameTitle"></h2>
+            <p>Game content will be here!</p>
+            <button class="close-btn" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Function to open game modal
+        function openGame(gameName) {
+            // Set game title in modal
+            document.getElementById('gameTitle').innerText = gameName;
+            // Display the modal
+            document.getElementById('gameModal').style.display = 'flex';
+        }
+
+        // Function to close the game modal
+        function closeModal() {
+            // Hide the modal
+            document.getElementById('gameModal').style.display = 'none';
+        }
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Tic-Tac-Toe</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .game-container {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-gap: 10px;
+    margin: 20px auto;
+}
+
+.cell {
+    border: 1px solid black;
+    width: 100px;
+    height: 100px;
+    font-size: 50px;
+    text-align: center;
+    line-height: 100px;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
+
+#message {
+    text-align: center;
+}
+
+#startButton {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+    </style>
+</head>
+
+<body>
+
+    <button id="startButton">Start Game</button>
+    <div class="game-container">
+        <div class="cell hidden" id="cell1"></div>
+        <div class="cell hidden" id="cell2"></div>
+        <div class="cell hidden" id="cell3"></div>
+        <div class="cell hidden" id="cell4"></div>
+        <div class="cell hidden" id="cell5"></div>
+        <div class="cell hidden" id="cell6"></div>
+        <div class="cell hidden" id="cell7"></div>
+        <div class="cell hidden" id="cell8"></div>
+        <div class="cell hidden" id="cell9"></div>
+    </div>
+    <h2 id="message"></h2>
+    <script src="script.js"></script>
+</body>
+
+</html>
+<script>
+const cells = document.querySelectorAll('.cell');
+const message = document.getElementById('message');
+const startButton = document.getElementById('startButton');
+let currentPlayer = 'X';
+
+function handleCellClick(cell) {
+    if (cell.textContent === '') {
+        cell.textContent = currentPlayer;
+        if (checkWin()) {
+            message.textContent = currentPlayer + ' wins!';
+            disableCells();
+        } else if (checkDraw()) {
+            message.textContent = "It's a draw!";
+            disableCells();
+        } else {
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            message.textContent = currentPlayer + "'s turn";
+        }
+    }
+}
+
+function checkWin() {
+    const winningCombinations = [
+        [1, 2, 3], [4, 5, 6], [7, 8, 9], // Rows
+        [1, 4, 7], [2, 5, 8], [3, 6, 9], // Columns
+        [1, 5, 9], [3, 5, 7] // Diagonals
+    ];
+
+    return winningCombinations.some(combination => {
+        return combination.every(index => {
+            return cells[index - 1].textContent === currentPlayer;
+        });
+    });
+}
+
+function checkDraw() {
+    return [...cells].every(cell => cell.textContent !== '');
+}
+
+function disableCells() {
+    cells.forEach(cell => cell.removeEventListener('click', handleCellClick));
+}
+
+startButton.addEventListener('click', () => {
+    startButton.style.display = 'none';
+    cells.forEach(cell => {
+        cell.classList.remove('hidden');
+    });
+});
+
+cells.forEach(cell => {
+    cell.addEventListener('click', () => handleCellClick(cell));
+});
+</script>
+<script src="script.js"></script>
+</body>
+
+</html>

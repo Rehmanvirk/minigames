@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #282c34;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-template-rows: repeat(4, 100px);
+            gap: 15px;
+        }
+
+        .card {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            perspective: 1000px;
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+        }
+
+        .card.flip .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front,
+        .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+        }
+
+        .card-front {
+            background-color: #61dafb;
+        }
+
+        .card-back {
+            background-color: #282c34;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: rotateY(180deg);
+            color: #fff;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .win-message {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            color: #61dafb;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Memory Game</h1>
+        <div class="game-container"></div>
+        <p class="win-message"></p>
+    </div>
+
+    <script>
+        const symbols = ['💩', '🐱', '🐶', '🦄', '🐸', '🐟', '🦋', '🌿'];
+        let cardValues = [...symbols, ...symbols]; // Double the symbols for pairs
+
+        cardValues.sort(() => Math.random() - 0.5); // Shuffle the cards
+
+        const gameContainer = document.querySelector('.game-container');
+        const winMessage = document.querySelector('.win-message');
+
+        let flippedCards = [];
+        let matchedCards = 0;
+
+        function createCard(symbol) {
+            const card = document.createElement('div');
+            card.classList.add('card');
+            
+            card.innerHTML = `
+                <div class="card-inner">
+                    <div class="card-front"></div>
+                    <div class="card-back">${symbol}</div>
+                </div>
+            `;
+
+            card.addEventListener('click', () => {
+                if (!card.classList.contains('flip') && flippedCards.length < 2) {
+                    card.classList.add('flip');
+                    flippedCards.push(card);
+
+                    if (flippedCards.length === 2) {
+                        checkForMatch();
+                    }
+                }
+            });
+
+            return card;
+        }
+
+        function checkForMatch() {
+            const [card1, card2] = flippedCards;
+            const symbol1 = card1.querySelector('.card-back').textContent;
+            const symbol2 = card2.querySelector('.card-back').textContent;
+
+            if (symbol1 === symbol2) {
+                card1.removeEventListener('click', () => {});
+                card2.removeEventListener('click', () => {});
+                matchedCards += 2;
+                checkWinCondition();
+            } else {
+                setTimeout(() => {
+                    card1.classList.remove('flip');
+                    card2.classList.remove('flip');
+                }, 1000);
+            }
+
+            flippedCards = [];
+        }
+
+        function checkWinCondition() {
+            if (matchedCards === cardValues.length) {
+                winMessage.textContent = 'Congratulations! You matched all the cards!';
+            }
+        }
+
+        function initGame() {
+            cardValues.forEach(symbol => {
+                const card = createCard(symbol);
+                gameContainer.appendChild(card);
+            });
+        }
+
+        initGame();
+    </script>
+</body>
+</html>

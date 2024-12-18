@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sequence Slide Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #282c34;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            flex-direction: column;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+
+        .game-info div {
+            font-size: 1.2rem;
+        }
+
+        .game-container {
+            display: grid;
+            gap: 5px;
+        }
+
+        .tile {
+            width: 60px;
+            height: 60px;
+            background-color: #61dafb;
+            color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s ease;
+        }
+
+        .empty {
+            background-color: #282c34;
+        }
+
+        .win-message {
+            margin-top: 20px;
+            font-size: 1.5rem;
+            color: #61dafb;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sequence Slide Game</h1>
+    <div class="game-info">
+        <div>Time: <span id="timer">0</span> sec</div>
+        <div>Moves: <span id="moves">0</span></div>
+    </div>
+    <div class="game-container"></div>
+    <p class="win-message"></p>
+
+    <script>
+        const gameContainer = document.querySelector('.game-container');
+        const timerElement = document.getElementById('timer');
+        const movesElement = document.getElementById('moves');
+        const winMessage = document.querySelector('.win-message');
+
+        let gridSize = 3;
+        let tiles = [];
+        let emptyTileIndex;
+        let moves = 0;
+        let timer = 0;
+        let timerInterval = null;
+
+        function startTimer() {
+            if (!timerInterval) {
+                timerInterval = setInterval(() => {
+                    timer++;
+                    timerElement.textContent = timer;
+                }, 2000);
+            }
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function createGrid(size) {
+            gameContainer.style.gridTemplateColumns = `repeat(${size}, 60px)`;
+            gameContainer.style.gridTemplateRows = `repeat(${size}, 60px)`;
+            
+            gameContainer.innerHTML = '';
+            tiles.forEach((num, index) => {
+                const tile = document.createElement('div');
+                tile.classList.add('tile');
+                if (num === null) {
+                    tile.classList.add('empty');
+                    emptyTileIndex = index;
+                } else {
+                    tile.textContent = num;
+                }
+
+                tile.addEventListener('click', () => handleTileClick(index));
+                gameContainer.appendChild(tile);
+            });
+        }
+
+        function handleTileClick(index) {
+            if (isAdjacent(index, emptyTileIndex)) {
+                swapTiles(index, emptyTileIndex);
+                moves++;
+                movesElement.textContent = moves;
+                checkWinCondition();
+            }
+        }
+
+        function swapTiles(index1, index2) {
+            [tiles[index1], tiles[index2]] = [tiles[index2], tiles[index1]];
+            createGrid(gridSize);
+        }
+
+        function isAdjacent(index1, index2) {
+            const row1 = Math.floor(index1 / gridSize);
+            const col1 = index1 % gridSize;
+            const row2 = Math.floor(index2 / gridSize);
+            const col2 = index2 % gridSize;
+            return Math.abs(row1 - row2) + Math.abs(col1 - col2) === 1;
+        }
+
+        function checkWinCondition() {
+            if (tiles.slice(0, -1).every((num, index) => num === index + 1)) {
+                stopTimer();
+                winMessage.textContent = `Congratulations! You completed the puzzle in ${timer} seconds with ${moves} moves!`;
+            }
+        }
+
+        function initGame() {
+            moves = 0;
+            timer = 0;
+            stopTimer();
+            timerElement.textContent = timer;
+            movesElement.textContent = moves;
+
+            // Create ordered grid
+            tiles = Array.from({ length: gridSize * gridSize }, (_, i) => i + 1);
+            tiles[tiles.length - 1] = null; // Last tile is empty
+            createGrid(gridSize);
+
+            // Wait 3 seconds, then shuffle and start the game
+            setTimeout(() => {
+                shuffleArray(tiles);
+                createGrid(gridSize);
+                startTimer();
+            }, 3000); // Show correct sequence for 3 seconds
+        }
+
+        initGame();
+    </script>
+</body>
+</html>
